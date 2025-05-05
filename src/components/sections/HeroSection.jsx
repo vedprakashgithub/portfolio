@@ -1,75 +1,84 @@
-import { motion } from 'framer-motion'
-import Button from '../ui/Button'
+import { useState, useEffect, useRef } from "react";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
 
-const HeroSection = () => {
+import Button from "../../components/Button";
+
+const words = [
+  { text: "Ideas", imgPath: "/images/ideas.svg" },
+  { text: "Concepts", imgPath: "/images/concepts.svg" },
+  { text: "Designs", imgPath: "/images/designs.svg" },
+  { text: "Code", imgPath: "/images/code.svg" },
+];
+
+const Hero = () => {
+  const heroRef = useRef();
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  // GSAP fade animation
+  useGSAP(() => {
+    gsap.fromTo(
+      heroRef.current.querySelectorAll(".hero-text h1"),
+      { y: 50, opacity: 0 },
+      { y: 0, opacity: 1, stagger: 0.2, duration: 1, ease: "power2.out" }
+    );
+  }, []);
+
+  // Auto-slide words every 2 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % words.length);
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const currentWord = words[currentIndex];
+
   return (
-    <section className="pt-32 pb-16 md:pt-40 md:pb-24">
-      <div className="container mx-auto px-4">
-        <div className="flex flex-col lg:flex-row items-center">
-          <div className="lg:w-1/2 lg:pr-16">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <span className="inline-block px-3 py-1 bg-primary-100 dark:bg-gray-800 text-primary-600 dark:text-primary-400 text-sm font-medium rounded-full mb-6">
-                Ved Prakash Portfolio
-              </span>
-            </motion.div>
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight"
-            >
-              Building <span className="text-primary-500">Intelligent</span> Solutions Through Code
-            </motion.h1>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="text-xl text-gray-600 dark:text-gray-400 mb-8"
-            >
-              Specializing in Artificial Intelligence and Full Stack Development, creating innovative solutions that bridge technology and real-world applications.
-            </motion.p>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-              className="flex flex-col sm:flex-row gap-4"
-            >
-              <Button as="link" to="/projects" variant="primary" size="lg">
-                View Projects
-              </Button>
-              <Button as="link" to="/contact" variant="outline" size="lg">
-                Get in Touch
-              </Button>
-            </motion.div>
-          </div>
-          <div className="lg:w-1/2 mt-12 lg:mt-0">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.7, delay: 0.4 }}
-              className="relative"
-            >
-              <div className="relative aspect-[4/3] overflow-hidden rounded-2xl shadow-xl">
-                <img
-                  src="https://plus.unsplash.com/premium_photo-1678917651747-5c58fda9e7f1?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTN8fHBvcnRmb2xpb3xlbnwwfDB8MHx8fDA%3D"
-                  alt="Programming and AI visualization"
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-r from-primary-500/20 to-secondary-500/20"></div>
-              </div>
-              
-              <div className="absolute -bottom-6 -left-6 w-24 h-24 rounded-full bg-accent-500/20 backdrop-blur-sm"></div>
-              <div className="absolute -top-6 -right-6 w-32 h-32 rounded-full bg-primary-500/20 backdrop-blur-sm"></div>
-            </motion.div>
-          </div>
+    <section
+      ref={heroRef}
+      id="hero"
+      className="w-full min-h-screen flex flex-col md:flex-row items-center justify-between bg-black text-white px-6 md:px-20 pt-20"
+    >
+      {/* LEFT */}
+      <div className="flex-1 flex flex-col gap-6 z-10">
+        <div className="text-4xl md:text-6xl font-bold leading-tight hero-text">
+          <h1 className="flex items-center gap-3">
+            Shaping{" "}
+            <span className="flex items-center gap-2">
+              <img
+                src={currentWord.imgPath}
+                alt={currentWord.text}
+                className="w-10 h-10 p-1 rounded-full bg-white"
+              />
+              <span>{currentWord.text}</span>
+            </span>
+          </h1>
+          <h1>into Real Projects</h1>
+          <h1>that Deliver Results</h1>
         </div>
+
+        <p className="text-white/70 text-lg max-w-lg">
+          Hi, I’m Ved Prakash, a developer based in India with a passion for code.
+        </p>
+
+        <Button
+          text="SEE MY WORK"
+          className="bg-blue-100 text-black rounded-md md:w-80 w-60 h-14 hover:bg-blue-200 transition-all"
+        />
+      </div>
+
+      {/* RIGHT */}
+      <div className="flex-1 flex justify-center items-center mt-10 md:mt-0">
+        <img
+          src="/images/hero-pc.png"
+          alt="Hero Visual"
+          className="max-w-[500px] w-full object-contain"
+        />
       </div>
     </section>
-  )
-}
+  );
+};
 
-export default HeroSection
+export default Hero;
